@@ -956,9 +956,9 @@ function ChatsSection({
   };
 
   return (
-    <div className="relative space-y-6">
+    <div className="relative space-y-4 sm:space-y-6">
       {toast && (
-        <div className="fixed right-6 top-24 z-50 rounded-full bg-[var(--ink)] px-5 py-3 text-sm text-[var(--card)] shadow-lg">
+        <div className="fixed left-1/2 top-20 z-50 -translate-x-1/2 rounded-full bg-[var(--ink)] px-4 py-2.5 text-xs text-[var(--card)] shadow-lg sm:left-auto sm:right-6 sm:top-24 sm:translate-x-0 sm:px-5 sm:py-3 sm:text-sm">
           {toast}
         </div>
       )}
@@ -967,19 +967,19 @@ function ChatsSection({
         <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--primary)]">
           {branchName} · {t("reception.section.messages")}
         </p>
-        <h2 className="mb-2 font-serif text-4xl font-bold text-[var(--ink)]">
+        <h2 className="mb-2 font-serif text-2xl font-bold text-[var(--ink)] sm:text-4xl">
           {t("chat.inbox.title")}
         </h2>
-        <p className="text-[var(--muted)]">{t("chat.inbox.subtitle")}</p>
+        <p className="text-sm text-[var(--muted)] sm:text-base">{t("chat.inbox.subtitle")}</p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 rounded-full border border-[var(--line)] bg-[var(--card)] p-1">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="-mx-1 flex gap-1 overflow-x-auto rounded-full border border-[var(--line)] bg-[var(--card)] p-1 sm:mx-0 sm:overflow-visible">
           {(["all", "new", "in_progress", "closed"] as const).map((item) => (
             <button
               key={item}
               onClick={() => setFilter(item)}
-              className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition sm:px-4 ${
                 filter === item
                   ? "bg-[var(--primary)] text-white"
                   : "text-[var(--ink)] hover:bg-[var(--bg-soft)]"
@@ -996,30 +996,30 @@ function ChatsSection({
           placeholder={t("chat.search.placeholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="min-w-[200px] max-w-xs flex-1 rounded-full border border-[var(--line)] bg-[var(--input-bg)] px-4 py-2 text-sm text-[var(--ink)] focus:border-[var(--primary)] focus:outline-none"
+          className="w-full min-w-0 rounded-full border border-[var(--line)] bg-[var(--input-bg)] px-4 py-2 text-sm text-[var(--ink)] focus:border-[var(--primary)] focus:outline-none sm:min-w-[200px] sm:max-w-xs sm:flex-1"
         />
 
         {counts.closed > 0 && (
           <button
             onClick={purgeOld}
-            className="rounded-full border border-[var(--line)] px-4 py-2 text-xs text-[var(--muted)] transition hover:border-red-300 hover:text-red-600"
+            className="self-start rounded-full border border-[var(--line)] px-4 py-2 text-xs text-[var(--muted)] transition hover:border-red-300 hover:text-red-600 sm:self-auto"
           >
             🧹 {t("chat.purge")}
           </button>
         )}
       </div>
 
-      <div className="grid h-[calc(100vh-360px)] grid-cols-1 gap-5 md:grid-cols-[360px_1fr]">
+      <div className="grid h-[calc(100vh-320px)] min-h-[500px] grid-cols-1 gap-4 sm:gap-5 md:h-[calc(100vh-360px)] md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr]">
         {/* Conversations List */}
-        <div className="flex flex-col overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--card)]">
-          <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4">
-            <p className="font-serif font-bold text-[var(--ink)]">{t("chat.conversations")}</p>
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+        <div className="flex min-h-[300px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] sm:rounded-3xl md:min-h-0">
+          <div className="flex items-center justify-between gap-2 border-b border-[var(--line)] px-4 py-3 sm:px-5 sm:py-4">
+            <p className="truncate font-serif font-bold text-[var(--ink)]">{t("chat.conversations")}</p>
+            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
               {filteredChats.length} {t("common.shown")}
             </span>
           </div>
 
-          <div className="flex-1 space-y-1.5 overflow-y-auto p-3">
+          <div className="flex-1 space-y-1.5 overflow-y-auto p-2 sm:p-3">
             {filteredChats.map((chat) => {
               const last = chat.messages[chat.messages.length - 1];
               const active = selectedId === chat.customerId;
@@ -1087,7 +1087,7 @@ function ChatsSection({
                     </div>
                   </button>
 
-                  <div className="flex gap-1 px-3 pb-2">
+                  <div className="flex flex-wrap gap-1 px-3 pb-2">
                     {chat.status !== "closed" ? (
                       <button
                         onClick={(e) => {
@@ -1166,15 +1166,15 @@ function ChatsSection({
         </div>
 
         {/* Chat Window */}
-        <div className="flex flex-col overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--card)]">
+        <div className="flex min-h-[400px] flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] sm:rounded-3xl md:min-h-0">
           {selected ? (
             <>
-              <div className="flex items-center gap-3 border-b border-[var(--line)] px-6 py-4">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--primary)] font-serif font-bold text-white">
+              <div className="flex flex-wrap items-center gap-3 border-b border-[var(--line)] px-4 py-3 sm:px-6 sm:py-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] font-serif font-bold text-white">
                   {selected.customerName.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex-1">
-                  <p className="font-serif text-lg font-bold leading-tight text-[var(--ink)]">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-serif text-base font-bold leading-tight text-[var(--ink)] sm:text-lg">
                     {selected.customerName}
                   </p>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">
@@ -1186,7 +1186,7 @@ function ChatsSection({
                   </p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex shrink-0 gap-2">
                   {selected.status !== "closed" ? (
                     <button
                       onClick={() => setStatus(selected.customerId, "closed")}
@@ -1211,7 +1211,7 @@ function ChatsSection({
                 </div>
               </div>
 
-              <div className="flex-1 space-y-3 overflow-y-auto bg-[var(--bg-soft)] p-6">
+              <div className="flex-1 space-y-3 overflow-y-auto bg-[var(--bg-soft)] p-4 sm:p-6">
                 {selected.messages.map((m, i) => (
                   <div
                     key={i}
@@ -1220,12 +1220,12 @@ function ChatsSection({
                     }`}
                   >
                     <div
-                      className={`flex max-w-[75%] flex-col ${
+                      className={`flex max-w-[85%] flex-col sm:max-w-[75%] ${
                         m.from === "reception" ? "items-end" : "items-start"
                       }`}
                     >
                       <span
-                        className={`inline-block rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+                        className={`inline-block break-words rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
                           m.from === "reception"
                             ? "rounded-br-md bg-[var(--primary)] text-white"
                             : "rounded-bl-md border border-[var(--line)] bg-[var(--card)] text-[var(--ink)]"
@@ -1245,9 +1245,9 @@ function ChatsSection({
               </div>
 
               {selected.status !== "closed" ? (
-                <div className="flex gap-2 border-t border-[var(--line)] bg-[var(--card)] p-4">
+                <div className="flex gap-2 border-t border-[var(--line)] bg-[var(--card)] p-3 sm:p-4">
                   <input
-                    className="flex-1 rounded-full border border-[var(--line)] bg-[var(--input-bg)] px-5 py-3 text-sm text-[var(--ink)] transition focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+                    className="min-w-0 flex-1 rounded-full border border-[var(--line)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--ink)] transition focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 sm:px-5 sm:py-3"
                     placeholder={t("chat.reply.placeholder")}
                     value={reply}
                     onChange={(e) => setReply(e.target.value)}
@@ -1260,7 +1260,7 @@ function ChatsSection({
                   />
                   <button
                     onClick={onSend}
-                    className="rounded-full bg-[var(--primary)] px-7 text-sm font-medium text-white shadow-md shadow-[var(--primary)]/25 transition hover:opacity-90"
+                    className="shrink-0 rounded-full bg-[var(--primary)] px-5 text-sm font-medium text-white shadow-md shadow-[var(--primary)]/25 transition hover:opacity-90 sm:px-7"
                   >
                     {t("common.send")}
                   </button>
@@ -1274,7 +1274,7 @@ function ChatsSection({
               )}
             </>
           ) : (
-            <div className="flex flex-1 flex-col items-center justify-center p-10 text-center">
+            <div className="flex flex-1 flex-col items-center justify-center p-6 text-center sm:p-10">
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--primary)]/10 text-[var(--primary)]">
                 <IconChat />
               </div>
