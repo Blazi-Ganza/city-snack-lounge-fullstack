@@ -31,7 +31,7 @@ async function bootstrap() {
   initChatSocket(server);        // creates the ONE Socket.IO instance
   initNotificationsSocket();     // 👈 attaches notification handlers to it (no server arg)
 
-  server.listen(env.API_PORT, env.API_HOST, () => {
+  server.listen(process.env.PORT ? parseInt(process.env.PORT) : env.API_PORT, env.API_HOST, () => {
     console.log(`API running at http://${env.API_HOST}:${env.API_PORT}`);
   });
 }
