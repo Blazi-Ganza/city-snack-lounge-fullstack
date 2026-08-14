@@ -52,7 +52,7 @@ const reservationSchema = z.object({
 });
 
 const orderItemSchema = z.object({
-  id: z.number(),
+  id: z.union([z.string(), z.number()]),
   name: z.string(),
   price: z.number(),
   qty: z.number().int().min(1),
