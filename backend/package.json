@@ -16,7 +16,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.2",
-    "tsx": "^4.23.5",
+    "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },
   "name": "backend",
@@ -24,7 +24,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/server.ts",
-    "start": "node --loader tsx src/server.ts",
+    "start": "tsx src/server.ts",
     "seed:menu": "tsx src/db/seed-menu.ts",
     "seed:staff": "tsx src/db/seed-staff.ts"
   }
