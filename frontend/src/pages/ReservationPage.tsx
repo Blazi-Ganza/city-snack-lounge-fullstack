@@ -20,13 +20,13 @@ export function ReservationPage() {
           HERO — no watermark
       ═══════════════════════════════════════════════ */}
       <PageHero
-  eyebrow={t("reservation.eyebrow")}
-  title={t("reservation.title")}
-  accentWord={branch.name}
-  accentPosition="after"
-  subtitle={t("reservation.subtitle", { branch: branch.name })}
-  showWatermark={false}
-/>
+        eyebrow={t("reservation.eyebrow")}
+        title={t("reservation.title", { branch: "" }).trim()} // Trims the space so PageHero can add the branch as an accent
+        accentWord={branch.name}
+        accentPosition="after"
+        subtitle={t("reservation.subtitle", { branch: branch.name })}
+        showWatermark={false}
+      />
 
       {/* ═══════════════════════════════════════════════
           CONTENT
@@ -44,36 +44,35 @@ export function ReservationPage() {
                 {branch.name}
               </p>
               <h2 className="font-display mt-3 text-3xl font-semibold leading-tight text-[var(--ink)] sm:text-4xl">
-                A seat is waiting for you.
+                {t("reservation.info.heading")}
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
-                Whether it's a quiet dinner or a lively gathering, we'll have
-                everything ready before you arrive.
+                {t("reservation.info.subheading")}
               </p>
 
               {/* Info list */}
               <ul className="mt-8 space-y-4">
                 <InfoRow
                   icon="🕒"
-                  label="Open Daily"
-                  value="10:00 AM – 11:00 PM"
+                  label={t("reservation.info.openDailyLabel")}
+                  value={t("reservation.info.openDailyValue")}
                 />
                 <InfoRow
                   icon="📞"
-                  label="Need help?"
-                  value="Call us for large parties (10+)"
+                  label={t("reservation.info.helpLabel")}
+                  value={t("reservation.info.helpValue")}
                 />
                 <InfoRow
                   icon="✅"
-                  label="Confirmation"
-                  value="You'll receive a confirmation shortly"
+                  label={t("reservation.info.confirmationLabel")}
+                  value={t("reservation.info.confirmationValue")}
                 />
               </ul>
 
               {/* Branch tag */}
               <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--card)]/70 px-4 py-2 text-xs font-medium text-[var(--ink)] backdrop-blur-sm">
                 <span className="h-2 w-2 rounded-full bg-[var(--success)]" />
-                Booking for {branch.name}
+                {t("reservation.info.bookingFor", { branch: branch.name })}
               </div>
             </div>
           </aside>
@@ -82,10 +81,10 @@ export function ReservationPage() {
           <div className="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-sm sm:p-10">
             <div className="relative">
               <h3 className="font-display text-xl font-semibold text-[var(--ink)]">
-                Your details
+                {t("reservation.form.heading")}
               </h3>
               <p className="mt-1 text-xs text-[var(--muted)]">
-                All fields required
+                {t("reservation.form.allRequired")}
               </p>
 
               <form
@@ -119,23 +118,23 @@ export function ReservationPage() {
                     setError(
                       requestError instanceof Error
                         ? requestError.message
-                        : "Failed to submit reservation"
+                        : t("reservation.form.errorFallback")
                     );
                   } finally {
                     setLoading(false);
                   }
                 }}
               >
-                <Field label={t("reservation.name") || "Full name"}>
+                <Field label={t("reservation.name")}>
                   <input
                     required
                     name="name"
-                    placeholder="e.g. Sarah Uwimana"
+                    placeholder={t("reservation.namePlaceholder")}
                     className="h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--input-bg)] px-4 text-sm text-[var(--ink)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/10"
                   />
                 </Field>
 
-                <Field label={t("reservation.phone") || "Phone number"}>
+                <Field label={t("reservation.phone")}>
                   <input
                     required
                     name="phone"
@@ -146,7 +145,7 @@ export function ReservationPage() {
                 </Field>
 
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <Field label="Date">
+                  <Field label={t("reservation.date")}>
                     <input
                       required
                       name="date"
@@ -155,7 +154,7 @@ export function ReservationPage() {
                       className="h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--input-bg)] px-4 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/10"
                     />
                   </Field>
-                  <Field label="Time">
+                  <Field label={t("reservation.time")}>
                     <input
                       required
                       name="time"
@@ -165,7 +164,7 @@ export function ReservationPage() {
                   </Field>
                 </div>
 
-                <Field label={t("reservation.guests") || "Number of guests"}>
+                <Field label={t("reservation.guests")}>
                   <input
                     required
                     name="guests"
@@ -179,12 +178,12 @@ export function ReservationPage() {
 
                 <Button className="w-full" type="submit" disabled={loading}>
                   {loading
-                    ? "Submitting..."
-                    : t("reservation.submit") || "Confirm Reservation"}
+                    ? t("reservation.submitting")
+                    : t("reservation.submit")}
                 </Button>
 
                 <p className="text-center text-xs text-[var(--muted)]">
-                  By booking, you agree to our reservation policy.
+                  {t("reservation.form.policy")}
                 </p>
               </form>
 

@@ -6,18 +6,17 @@
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, proxy-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <script>
+       <script>
       (function () {
         try {
-          var cached = localStorage.getItem("city-snack-theme");
-          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          var theme = cached === "dark" || cached === "light"
-            ? cached
-            : (systemDark ? "dark" : "light");
-          document.documentElement.classList.add(theme);
-        } catch (e) {
-          document.documentElement.classList.add("light");
-        }
+          var saved = localStorage.getItem('city-snack-theme');
+          var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && supportDarkMode)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.add('light');
+          }
+        } catch (e) {}
       })();
     </script>
 

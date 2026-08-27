@@ -3,6 +3,7 @@ import {
   useContext,
   useMemo,
   useState,
+  useEffect,
   type PropsWithChildren,
 } from "react";
 
@@ -114,7 +115,8 @@ const translations: Record<Language, Dictionary> = {
     "menu.drinks": "Drinks",
     "menu.desserts": "Desserts",
 
-    "reservation.title": "Reserve a Table",
+    /* ════ RESERVATIONS SECTION ════ */
+    "reservation.title": "Reserve a Table {branch}",
     "reservation.subtitle":
       "Book a table at {branch}. Choose date, time, and guests.",
     "reservation.name": "Full name",
@@ -125,9 +127,42 @@ const translations: Record<Language, Dictionary> = {
       "Reservation confirmed at {branch}! We'll be in touch shortly.",
     "reservation.eyebrow": "Book Your Table",
 
-    "reviews.title": "Customer Reviews",
-    "reviews.subtitle": "What customers say about {branch}.",
+    "reservation.info.heading": "A seat is waiting for you.",
+    "reservation.info.subheading":
+      "Whether it's a quiet dinner or a lively gathering, we'll have everything ready before you arrive.",
+    "reservation.info.openDailyLabel": "OPEN DAILY",
+    "reservation.info.openDailyValue": "10:00 AM – 11:00 PM",
+    "reservation.info.helpLabel": "NEED HELP?",
+    "reservation.info.helpValue": "Call us for large parties (10+)",
+    "reservation.info.confirmationLabel": "CONFIRMATION",
+    "reservation.info.confirmationValue":
+      "You'll receive a confirmation shortly",
+    "reservation.info.bookingFor": "Booking for {branch}",
 
+    "reservation.form.heading": "Your details",
+    "reservation.form.allRequired": "All fields required",
+    "reservation.form.depositNote":
+      "A deposit of {amount} may be required for large groups.",
+    "reservation.form.policy":
+      "By booking, you agree to our reservation policy.",
+    "reservation.form.errorFallback": "Failed to submit reservation",
+    "reservation.namePlaceholder": "e.g. Sarah Uwimana",
+    "reservation.date": "DATE",
+    "reservation.time": "TIME",
+    "reservation.submitting": "Submitting...",
+
+    /* ════ REVIEWS SECTION ════ */
+    "reviews.eyebrow": "GUEST EXPERIENCES",
+    "reviews.title": "Moments at {branch}",
+    "reviews.subtitle":
+      "Real stories from real guests — every review helps us serve you better.",
+    "reviews.latestFeedback": "LATEST FEEDBACK",
+    "reviews.recentReviews": "Recent Reviews",
+    "reviews.writeFirst": "Write First Review",
+    "reviews.writeReview": "Write a Review",
+    "reviews.empty": "No reviews yet",
+
+    /* ════ CONTACT & CHAT ════ */
     "contact.title": "Contact & Location",
     "contact.subtitle": "Contact {branch} for orders and table booking.",
     "contact.phone": "Phone",
@@ -151,6 +186,8 @@ const translations: Record<Language, Dictionary> = {
     "branch.continue": "Continue with {city}",
     "branch.musanze.subtitle": "Fast pickup and mountain-view dining",
     "branch.huye.subtitle": "Late-night lounge and quick table service",
+    "branch.huye": "Huye Branch",
+    "branch.musanze": "Musanze Branch",
 
     "footer.copy":
       "© 2026 City Snack Lounge. Crafted for smooth food ordering.",
@@ -159,6 +196,7 @@ const translations: Record<Language, Dictionary> = {
     "food.ready": "Ready in about 20-25 min at {branch}.",
     "food.add": "Add to Order",
 
+    /* ════ CART & PAYMENTS ════ */
     "cart.title": "Your Order",
     "cart.empty": "Your cart is empty",
     "cart.emptyHint": "Add items from the menu to get started.",
@@ -183,8 +221,6 @@ const translations: Record<Language, Dictionary> = {
       "Please fill in all fields correctly (name min 2 chars, phone min 7 digits).",
     "cart.failedOrder": "Failed to place order",
 
-    /* 🆕 MoMo payment — REAL MTN Rwanda flow
-       Order: Tap to dial → Enter amount → Verify NAME → Enter PIN */
     "cart.placeOrderMomo": "Place Order & Pay",
     "cart.payment.title": "Payment method",
     "cart.payment.cash": "Cash",
@@ -212,9 +248,6 @@ const translations: Record<Language, Dictionary> = {
     "cart.momo.receptionWillConfirm":
       "We'll match your payment to: {name} ({phone}). Confirmation in a few minutes.",
 
-    /* Reception (English kept identical — reception is always EN) */
-    "branch.huye": "Huye Branch",
-    "branch.musanze": "Musanze Branch",
     "greeting.morning": "Good morning",
     "greeting.afternoon": "Good afternoon",
     "greeting.evening": "Good evening",
@@ -230,6 +263,7 @@ const translations: Record<Language, Dictionary> = {
     "common.total": "Total",
     "common.at": "at",
     "common.received": "Received",
+
     "reception.portal": "Reception Portal",
     "reception.console": "Daily Service Console",
     "reception.receptionist": "Receptionist",
@@ -339,29 +373,6 @@ const translations: Record<Language, Dictionary> = {
     "delivery.empty.none": "No active deliveries",
     "delivery.empty.hint":
       "Orders marked \"out for delivery\" will appear here.",
-
-    "reservation.info.heading": "A seat is waiting for you.",
-    "reservation.info.subheading":
-      "Whether it's a quiet dinner or a lively gathering, we'll have everything ready before you arrive.",
-    "reservation.info.openDailyLabel": "Open Daily",
-    "reservation.info.openDailyValue": "10:00 AM – 11:00 PM",
-    "reservation.info.helpLabel": "Need help?",
-    "reservation.info.helpValue": "Call us for large parties (10+)",
-    "reservation.info.confirmationLabel": "Confirmation",
-    "reservation.info.confirmationValue":
-      "You'll receive a confirmation shortly",
-    "reservation.info.bookingFor": "Booking for {branch}",
-    "reservation.form.heading": "Your details",
-    "reservation.form.allRequired": "All fields required",
-    "reservation.form.depositNote":
-      "A deposit of {amount} may be required for large groups.",
-    "reservation.form.policy":
-      "By booking, you agree to our reservation policy.",
-    "reservation.form.errorFallback": "Failed to submit reservation",
-    "reservation.namePlaceholder": "e.g. Sarah Uwimana",
-    "reservation.date": "Date",
-    "reservation.time": "Time",
-    "reservation.submitting": "Submitting...",
   },
 
   /* ═══════════════════════════════════════════════════════
@@ -379,9 +390,182 @@ const translations: Record<Language, Dictionary> = {
     "nav.contact": "Contact",
     "nav.chat": "Chat",
     "nav.changeBranch": "Changer de branche",
-    "nav.branch": "Branche: {branch}",
+    "nav.branch": "Branche : {branch}",
 
-    "cart.title": "Votre commande",
+    "home.title": "Commandez facilement à {branch}.",
+    "home.subtitle":
+      "Choisissez vos plats, discutez avec notre équipe ou réservez une table en quelques clics.",
+    "home.browseMenu": "Voir le Menu Complet",
+    "home.chat": "Discutez Avec Nous",
+    "home.reserveTable": "Réserver une Table",
+
+    "home.services.eyebrow": "Ce que nous offrons",
+    "home.services.title": "Pensé pour votre façon de dîner",
+    "home.services.dineIn.title": "Sur Place",
+    "home.services.dineIn.desc":
+      "Profitez de notre ambiance chaleureuse avec un service attentif.",
+    "home.services.delivery.title": "Livraison",
+    "home.services.delivery.desc":
+      "De notre cuisine à votre porte en moins de 40 minutes.",
+    "home.services.pickup.title": "À Emporter",
+    "home.services.pickup.desc":
+      "Commandez à l'avance et évitez l'attente. Prêt à votre arrivée.",
+    "home.services.reservations.title": "Réservations",
+    "home.services.reservations.desc":
+      "Réservez votre table en quelques secondes pour toute occasion.",
+
+    "home.stats.guests": "Clients Satisfaits",
+    "home.stats.menuItems": "Plats au Menu",
+    "home.stats.rating": "Note Google",
+    "home.stats.prepTime": "Temps Moyen",
+
+    "home.gallery.eyebrow": "Moments de notre cuisine",
+    "home.gallery.title": "Un avant-goût de l'expérience",
+
+    "home.testimonials.eyebrow": "Adoré par nos clients",
+    "home.testimonials.title": "Ce que disent nos clients",
+    "home.testimonials.subtitle":
+      "De vraies histoires de vrais clients. Vous avez vécu une belle expérience ? Partagez-la avec nous.",
+    "home.testimonials.writeReview": "Écrire un Avis",
+    "home.testimonials.seeAll": "Voir tous les avis →",
+    "home.testimonials.shareExperience": "Partagez Votre Expérience",
+    "home.testimonials.review1.quote":
+      "La nourriture était incroyable et le personnel nous a fait sentir comme chez nous. La meilleure expérience culinaire en ville.",
+    "home.testimonials.review1.role": "Client régulier",
+    "home.testimonials.review2.quote":
+      "Livraison rapide, plats chauds et emballage soigné. City Snack ne déçoit jamais.",
+    "home.testimonials.review2.role": "Client livraison",
+    "home.testimonials.review3.quote":
+      "Endroit parfait pour un dîner en famille. Ambiance chaleureuse, grand choix de plats, prix raisonnables.",
+    "home.testimonials.review3.role": "Dîner en famille",
+
+    "home.cta.eyebrow": "Réservations ouvertes",
+    "home.cta.title": "Rejoignez-nous à {branch}",
+    "home.cta.subtitle":
+      "Réservez votre table et laissez-nous nous occuper du reste.",
+    "home.cta.viewMenu": "Voir le Menu",
+    "home.hero.scroll": "Défiler",
+
+    "home.popular": "Les Plus Commandés Ce Soir",
+    "home.popularSub": "Plats populaires à {branch} en ce moment.",
+    "home.hours": "Ouvert tous les jours : 10h00 - 23h00",
+    "home.tagline": "Là Où la Saveur Rencontre l'Ambiance",
+    "home.openNow": "Ouvert",
+    "home.closedNow": "Fermé",
+    "home.orderNow": "Commander",
+    "home.viewMenu": "Voir le Menu",
+    "home.stat1": "Clients Satisfaits",
+    "home.stat2": "Plats au Menu",
+    "home.stat3": "Années de Service",
+    "home.stat4": "Commandes Quotidiennes",
+    "home.whyTitle": "Pourquoi Nous Choisir",
+    "home.whySub": "Des moments soignés, à chaque visite",
+    "home.why1Title": "Ingrédients Frais",
+    "home.why1Desc": "Approvisionnés quotidiennement auprès des agriculteurs rwandais",
+    "home.why2Title": "Service Rapide",
+    "home.why2Desc": "De la commande à la table en 20 minutes",
+    "home.why3Title": "Ambiance Chaleureuse",
+    "home.why3Desc": "Un espace convivial pour chaque occasion",
+    "home.why4Title": "Chefs Qualifiés",
+    "home.why4Desc": "Des mains expertes pour chaque assiette",
+    "home.ctaTitle": "Prêt à goûter l'expérience ?",
+    "home.ctaSub": "Réservez votre table ou commandez en ligne aujourd'hui.",
+
+    "menu.description":
+      "Voici le menu de {branch}. Utilisez la recherche et les catégories pour trouver rapidement.",
+    "menu.search": "Rechercher un plat",
+    "menu.all": "Tout",
+    "menu.meals": "Repas",
+    "menu.drinks": "Boissons",
+    "menu.desserts": "Desserts",
+
+    /* ════ RESERVATIONS SECTION ════ */
+    "reservation.title": "Réserver une Table {branch}",
+    "reservation.subtitle":
+      "Réservez une table à {branch}. Choisissez la date, l'heure et le nombre de personnes.",
+    "reservation.name": "Nom complet",
+    "reservation.phone": "Numéro de téléphone",
+    "reservation.guests": "Nombre de personnes",
+    "reservation.submit": "Confirmer la Réservation",
+    "reservation.success":
+      "Votre réservation pour {branch} a été reçue. Nous vous contacterons bientôt.",
+    "reservation.eyebrow": "Réservez Votre Table",
+
+    "reservation.info.heading": "Une place vous attend.",
+    "reservation.info.subheading":
+      "Que ce soit un dîner tranquille ou une soirée animée, tout sera prêt avant votre arrivée.",
+    "reservation.info.openDailyLabel": "OUVERT TOUS LES JOURS",
+    "reservation.info.openDailyValue": "10h00 – 23h00",
+    "reservation.info.helpLabel": "BESOIN D'AIDE ?",
+    "reservation.info.helpValue": "Appelez-nous pour les grands groupes (10+)",
+    "reservation.info.confirmationLabel": "CONFIRMATION",
+    "reservation.info.confirmationValue":
+      "Vous recevrez une confirmation sous peu",
+    "reservation.info.bookingFor": "Réservation pour {branch}",
+
+    "reservation.form.heading": "Vos coordonnées",
+    "reservation.form.allRequired": "Tous les champs sont obligatoires",
+    "reservation.form.depositNote":
+      "Un acompte de {amount} peut être demandé pour les grands groupes.",
+    "reservation.form.policy":
+      "En réservant, vous acceptez notre politique de réservation.",
+    "reservation.form.errorFallback": "Échec de la soumission de la réservation",
+    "reservation.namePlaceholder": "ex. Sarah Uwimana",
+    "reservation.date": "DATE",
+    "reservation.time": "HEURE",
+    "reservation.submitting": "Envoi en cours...",
+
+    /* ════ REVIEWS SECTION ════ */
+    "reviews.eyebrow": "EXPÉRIENCES DES CLIENTS",
+    "reviews.title": "Moments à {branch}",
+    "reviews.subtitle":
+      "De vraies histoires de vrais clients — chaque avis nous aide à mieux vous servir.",
+    "reviews.latestFeedback": "DERNIERS AVIS",
+    "reviews.recentReviews": "Avis Récents",
+    "reviews.writeFirst": "Écrire le Premier Avis",
+    "reviews.writeReview": "Écrire un Avis",
+    "reviews.empty": "Aucun avis pour le moment",
+
+    /* ════ CONTACT & CHAT ════ */
+    "contact.title": "Contact & Localisation",
+    "contact.subtitle":
+      "Contactez {branch} pour vos commandes et réservations.",
+    "contact.phone": "Téléphone",
+    "contact.email": "E-mail",
+    "contact.address": "Adresse",
+    "contact.whatsapp": "Message sur WhatsApp",
+
+    "chat.title": "Chat Avec la Réception",
+    "chat.subtitle":
+      "Discutez avec {branch}. Renseignez-vous sur les plats ou la disponibilité des tables.",
+    "chat.input": "Tapez votre message",
+    "chat.send": "Envoyer",
+    "chat.widget": "Chat {city}",
+    "chat.modal": "Chat - {city}",
+    "chat.reply":
+      "Merci pour votre message à {branch}. Notre équipe vous répondra bientôt.",
+
+    "branch.choose": "Choisissez Votre Branche",
+    "branch.sub":
+      "Choisissez une branche pour voir son menu, discuter et réserver.",
+    "branch.label": "Branche",
+    "branch.continue": "Continuer avec {city}",
+    "branch.musanze.subtitle":
+      "Retrait rapide et repas avec vue sur les montagnes",
+    "branch.huye.subtitle":
+      "Salon nocturne et service de table rapide",
+    "branch.huye": "Branche de Huye",
+    "branch.musanze": "Branche de Musanze",
+
+    "footer.copy":
+      "© 2026 City Snack Lounge. Conçu pour une commande fluide.",
+    "footer.hours": "Ouvert tous les jours : 10h00 - 23h00",
+
+    "food.ready": "Prêt en 20-25 min environ à {branch}.",
+    "food.add": "Ajouter à la Commande",
+
+    /* ════ CART & PAYMENTS ════ */
+    "cart.title": "Votre Commande",
     "cart.empty": "Votre panier est vide",
     "cart.emptyHint": "Ajoutez des articles du menu pour commencer.",
     "cart.button": "Panier",
@@ -394,20 +578,18 @@ const translations: Record<Language, Dictionary> = {
     "cart.phone": "Numéro de téléphone",
     "cart.address": "Adresse de livraison",
     "cart.notes": "Notes (facultatif)",
-    "cart.placeOrder": "Passer la commande",
+    "cart.placeOrder": "Passer la Commande",
     "cart.placing": "Envoi de la commande...",
     "cart.remove": "Retirer",
     "cart.close": "Fermer",
     "cart.orderPlaced": "Commande passée !",
     "cart.orderCode": "Votre code de commande",
     "cart.orderSaved":
-      "La réception a été notifiée. Conservez votre code pour suivre votre commande.",
+      "La réception a été notifiée. Conservez votre code pour le suivi.",
     "cart.validationError":
       "Veuillez remplir correctement tous les champs (nom min 2 caractères, téléphone min 7 chiffres).",
     "cart.failedOrder": "Échec de la commande",
 
-    /* 🆕 MoMo payment (FR) — REAL MTN flow
-       Order: Tap to dial → Enter amount → Verify NAME → Enter PIN */
     "cart.placeOrderMomo": "Commander & Payer",
     "cart.payment.title": "Méthode de paiement",
     "cart.payment.cash": "Espèces",
@@ -418,7 +600,7 @@ const translations: Record<Language, Dictionary> = {
     "cart.momo.subtitle": "Suivez ces 4 étapes sur votre téléphone",
     "cart.momo.yourOrderCode": "Votre Code de Commande",
     "cart.momo.saveThisCode":
-      "Gardez-le — vous en aurez besoin pour retirer votre commande",
+      "Gardez-le — vous en aurez besoin pour le retrait",
     "cart.momo.step1": "Appuyer pour composer",
     "cart.momo.step2": "Entrez le montant",
     "cart.momo.step3": "Vérifiez notre nom",
@@ -431,14 +613,12 @@ const translations: Record<Language, Dictionary> = {
     "cart.momo.copy": "Copier",
     "cart.momo.tapToDial": "Appuyer pour composer",
     "cart.momo.waiting":
-      "Une fois payé, appuyez sur le bouton. La réception fera correspondre votre paiement avec votre nom et téléphone.",
+      "Une fois payé, appuyez sur le bouton. La réception vérifiera votre paiement par votre nom et téléphone.",
     "cart.momo.iHavePaid": "J'ai payé — Notifier la Réception",
     "cart.momo.receptionWillConfirm":
-      "Nous ferons correspondre votre paiement à : {name} ({phone}). Confirmation sous peu.",
+      "Nous vérifierons votre paiement pour : {name} ({phone}). Confirmation sous peu.",
 
-    "branch.huye": "Branche de Huye",
-    "branch.musanze": "Branche de Musanze",
-    "greeting.morning": "Bon matin",
+    "greeting.morning": "Bonjour",
     "greeting.afternoon": "Bon après-midi",
     "greeting.evening": "Bonsoir",
     "common.all": "Tout",
@@ -454,24 +634,121 @@ const translations: Record<Language, Dictionary> = {
     "common.at": "à",
     "common.received": "Reçu le",
 
+    "reception.portal": "Portail Réception",
+    "reception.console": "Console de Service Quotidien",
+    "reception.receptionist": "Réceptionniste",
+    "reception.customerView": "Vue Client",
+    "reception.branchLocked": "Verrouillé sur votre branche",
+    "reception.nav.overview": "Aperçu",
+    "reception.nav.chats": "Boîte de Chat",
+    "reception.nav.reservations": "Réservations",
+    "reception.nav.orders": "Commandes",
+    "reception.nav.deliveries": "Livraisons",
+    "reception.section.messages": "Messages",
+    "reception.section.bookings": "Réservations",
+    "reception.section.kitchen": "Cuisine",
+    "reception.section.dispatch": "Expédition",
+    "reception.overview.subtitle":
+      "Voici un aperçu calme de tout ce qui se passe dans votre branche.",
+    "reception.overview.openChats": "Ouvrir la Boîte de Chat",
+    "reception.overview.viewReservations": "Voir les Réservations",
+    "reception.overview.viewOrders": "Voir les Commandes",
+    "reception.overview.liveSnapshot": "Aperçu en Direct",
+    "reception.stat.messages": "Messages",
+    "reception.stat.messagesHint": "Nouvelles conversations non lues",
+    "reception.stat.reservations": "Réservations",
+    "reception.stat.reservationsHint": "Réservations en attente de confirmation",
+    "reception.stat.kitchen": "Cuisine",
+    "reception.stat.kitchenHint": "Commandes en préparation",
+    "reception.stat.dispatch": "Expédition",
+    "reception.stat.dispatchHint": "Livraisons en cours",
+
+    "chat.inbox.title": "Boîte de Chat",
+    "chat.inbox.subtitle":
+      "Chaque conversation en attente de votre réponse chaleureuse.",
+    "chat.search.placeholder": "Rechercher des conversations...",
+    "chat.purge": "Purger les anciens fermés",
+    "chat.conversations": "Conversations",
+    "chat.noMessages": "Aucun message pour le moment",
+    "chat.status.new": "Nouveau",
+    "chat.status.active": "Actif",
+    "chat.status.closed": "Fermé",
+    "chat.status.newConv": "Nouvelle conversation",
+    "chat.confirm.deleteTitle": "Supprimer cette conversation ?",
+    "chat.confirm.deleteBody": "Cette action est irréversible.",
+    "chat.confirm.purge":
+      "Supprimer toutes les conversations fermées de plus de 7 jours ?",
+    "chat.toast.closed": "Conversation fermée",
+    "chat.toast.reopened": "Conversation rouverte",
+    "chat.toast.deleted": "Conversation supprimée",
+    "chat.toast.purged": "Anciens chats fermés purgés",
+    "chat.reply.placeholder": "Tapez votre réponse...",
+    "chat.closedNotice":
+      "Cette conversation est fermée. Rouvrez-la pour répondre.",
+    "chat.selectPrompt": "Sélectionnez une conversation",
+    "chat.selectHint": "Choisissez un chat dans la liste pour commencer.",
+    "chat.empty.search": "Aucun résultat",
+    "chat.empty.none": "Aucune conversation ici",
+    "chat.empty.searchHint": "Essayez une autre recherche.",
+    "chat.empty.filterHint": "Essayez un autre filtre.",
+
+    "res.title": "Réservations",
+    "res.subtitle":
+      "Les réservations de tables apparaîtront ici en temps réel.",
+    "res.search.placeholder": "Rechercher nom, téléphone ou date...",
+    "res.date": "Date de réservation",
+    "res.party": "Taille du groupe",
+    "res.guest": "invité",
+    "res.guests": "invités",
+    "res.status.pending": "En attente",
+    "res.status.confirmed": "Confirmée",
+    "res.status.seated": "Installé",
+    "res.status.cancelled": "Annulée",
+    "res.action.confirm": "Confirmer",
+    "res.action.seat": "Marquer Installé",
+    "res.confirm.delete": "Supprimer définitivement cette réservation ?",
+    "res.toast.pending": "Réservation marquée en attente",
+    "res.toast.confirmed": "Réservation confirmée",
+    "res.toast.seated": "Client marqué comme installé",
+    "res.toast.cancelled": "Réservation annulée",
+    "res.toast.deleted": "Réservation supprimée",
+    "res.empty.search": "Aucune réservation correspondante",
+    "res.empty.none": "Aucune réservation ici",
+    "res.empty.searchHint": "Essayez une autre recherche.",
+    "res.empty.noneHint":
+      "Les nouvelles réservations apparaîtront ici en temps réel.",
+
+    "order.title": "Commandes",
+    "order.subtitle":
+      "Mettez à jour la progression des commandes pour la cuisine et l'expédition.",
+    "order.type.delivery": "Livraison",
+    "order.type.pickup": "À emporter",
     "order.status.new": "Nouveau",
-    "order.status.preparing": "Préparation",
+    "order.status.preparing": "En préparation",
     "order.status.ready": "Prêt",
     "order.status.outForDelivery": "En cours de livraison",
-    "order.status.delivered": "Livrée",
-    "order.status.cancelled": "Annulée",
+    "order.status.delivered": "Livré",
+    "order.status.cancelled": "Annulé",
     "order.status.awaitingPayment": "En attente de paiement",
+    "order.action.moveTo": "Déplacer vers",
+    "order.action.print": "Imprimer",
+    "order.action.printDelivery": "Imprimer les infos de livraison",
+    "order.confirm.cancel": "Annuler la commande {code} ?",
+    "order.confirm.delete": "Supprimer la commande {code} ?",
+    "order.toast.cancelled": "Commande annulée",
+    "order.toast.deleted": "Commande supprimée",
+    "order.empty.none": "Aucune commande ici",
+    "order.empty.hint":
+      "Les nouvelles commandes apparaîtront ici en temps réel.",
 
-    "reservation.title": "Réserver une table",
-    "reservation.subtitle":
-      "Réservez une table à {branch}. Choisissez la date, l'heure et le nombre de personnes.",
-    "reservation.name": "Nom complet",
-    "reservation.phone": "Numéro de téléphone",
-    "reservation.guests": "Nombre de personnes",
-    "reservation.submit": "Confirmer la Réservation",
-    "reservation.success":
-      "Votre réservation pour {branch} a été reçue. Nous vous contacterons bientôt.",
-    "reservation.eyebrow": "Réservez Votre Table",
+    "delivery.title": "Livraisons",
+    "delivery.subtitle": "Commandes actuellement en route vers les clients.",
+    "delivery.onTheWay": "En Route",
+    "delivery.markDelivered": "Marquer comme Livré",
+    "delivery.toast.delivered": "livré",
+    "delivery.empty.none": "Aucune livraison active",
+    "delivery.empty.hint":
+      "Les commandes marquées « en cours de livraison » apparaîtront ici.",
   },
 
   /* ═══════════════════════════════════════════════════════
@@ -491,8 +768,180 @@ const translations: Record<Language, Dictionary> = {
     "nav.changeBranch": "Hindura ishami",
     "nav.branch": "Ishami: {branch}",
 
-    "cart.title": "Ihitamo Ryawe",
-    "cart.empty": "Agatebo cyawe kirimo ubusa",
+    "home.title": "Gutumiza ibiryo biroroshye kuri {branch}.",
+    "home.subtitle":
+      "Hitamo ibiryo byawe, ganira n'itsinda ryacu, cyangwa bookinga ameza mu masegonda make.",
+    "home.browseMenu": "Reba Menu Yose",
+    "home.chat": "Ganira Natwe",
+    "home.reserveTable": "Bookinga Ameza",
+
+    "home.services.eyebrow": "Ibyo dutanga",
+    "home.services.title": "Biteguwe uko urya",
+    "home.services.dineIn.title": "Kurya Aho",
+    "home.services.dineIn.desc":
+      "Ishimire ikirere cyiza ndetse na service nziza kandi zinoze.",
+    "home.services.delivery.title": "Kubigezwaho",
+    "home.services.delivery.desc":
+      "Biva mu gikoni cyacu bikagera ku muryango wawe mu minota itarenze 40.",
+    "home.services.pickup.title": "Kuza Kubifata",
+    "home.services.pickup.desc":
+      "Tumiza mbere wirinde gutegereza.Uze usanga biteguye.",
+    "home.services.reservations.title": "Booking",
+    "home.services.reservations.desc":
+      "Bookinga ameza yawe mu masegonda make ku mpamvu iyo ari yo yose.",
+
+    "home.stats.guests": "Abashyitsi Bashimye",
+    "home.stats.menuItems": "Ibiryo ku Menu",
+    "home.stats.rating": "Amanota ya Google",
+    "home.stats.prepTime": "Igihe Gisanzwe",
+
+    "home.gallery.eyebrow": "Amashusho yo mu gikoni cyacu",
+    "home.gallery.title": "Uburyohe bw'icyitegererezo",
+
+    "home.testimonials.eyebrow": "Bikundwa n'abashyitsi bacu",
+    "home.testimonials.title": "Ibyo abantu bavuga",
+    "home.testimonials.subtitle":
+      "Inkuru z'ukuri z'abashyitsi nyabo. Wagize uburambe bwiza? Twishimiye kumva ubwawe.",
+    "home.testimonials.writeReview": "Andika Igitekerezo",
+    "home.testimonials.seeAll": "Reba ibitekerezo byose →",
+    "home.testimonials.shareExperience": "Sangira Uburambe Bwawe",
+    "home.testimonials.review1.quote":
+      "Ibiryo byari bitangaje kandi abakozi badutumye twumva turi mu rugo. Uburambe bwiza bwo kurya mu mujyi.",
+    "home.testimonials.review1.role": "Umushyitsi uhoraho",
+    "home.testimonials.review2.quote":
+      "Kubigezwaho byihuse, ibiryo bishyushye, n'ibipfunyika ni byiza. City Snack ntigusha abakiriya.",
+    "home.testimonials.review2.role": "Umukiriya wo kubigezwaho",
+    "home.testimonials.review3.quote":
+      "Ahantu heza ho gusangira n'umuryango. Ikirere cyiza, menu nini, n'ibiciro byiza.",
+    "home.testimonials.review3.role": "Umuryango usangira",
+
+    "home.cta.eyebrow": "Booking zirafunguye",
+    "home.cta.title": "Injira natwe kuri {branch}",
+    "home.cta.subtitle":
+      "Bookinga ameza yawe kandi tuzite ku bindi byose.",
+    "home.cta.viewMenu": "Reba Menu",
+    "home.hero.scroll": "Manura",
+
+    "home.popular": "Ibitumizwa Cyane Uyu Mugoroba",
+    "home.popularSub": "Ibiryo bikunzwe kuri {branch} ubu.",
+    "home.hours": "Dufungura buri munsi: 10:00 - 23:00",
+    "home.tagline": "Aho Uburyohe Buhurira n'Ikirere",
+    "home.openNow": "Turafunguye",
+    "home.closedNow": "Twarafunze",
+    "home.orderNow": "Tumiza Ubu",
+    "home.viewMenu": "Reba Menu",
+    "home.stat1": "Abakiriya Bashimye",
+    "home.stat2": "Ibiryo ku Menu",
+    "home.stat3": "Imyaka y'Ubunararibonye",
+    "home.stat4": "Amatumizo ya Buri Munsi",
+    "home.whyTitle": "Kuki Wahitamo Twe",
+    "home.whySub": "Ibihe byateguwe neza, buri gusura",
+    "home.why1Title": "Ibikoresho Bishya",
+    "home.why1Desc": "Biva ku bahinzi b'Abanyarwanda buri munsi",
+    "home.why2Title": "Serivisi Yihuse",
+    "home.why2Desc": "Kuva ku itumizo kugeza ku meza mu minota 20",
+    "home.why3Title": "Ikirere Gishyushye",
+    "home.why3Desc": "Ahantu heza ho kwishimira ku mpamvu iyo ari yo yose",
+    "home.why4Title": "Abateka B'inzobere",
+    "home.why4Desc": "Amaboko y'abahanga ategura buri sahani",
+    "home.ctaTitle": "Witeguye kumva uburambe?",
+    "home.ctaSub": "Bookinga ameza yawe cyangwa utumize kuri interineti uyu munsi.",
+
+    "menu.description":
+      "Iyi ni menu ya {branch}. Koresha gushakisha n'ibyiciro kugira ngo ubone ibiryo byihuse.",
+    "menu.search": "Shakisha ibiryo",
+    "menu.all": "Byose",
+    "menu.meals": "Amafunguro",
+    "menu.drinks": "Ibinyobwa",
+    "menu.desserts": "Udufunguro",
+
+    /* ════ RESERVATIONS SECTION ════ */
+    "reservation.title": "Bookinga Ameza {branch}",
+    "reservation.subtitle":
+      "Bookinga ameza kuri {branch}. Hitamo itariki, isaha n'umubare w'abashyitsi.",
+    "reservation.name": "Amazina yombi",
+    "reservation.phone": "Nimero ya telefoni",
+    "reservation.guests": "Umubare w'abashyitsi",
+    "reservation.submit": "Emeza Booking",
+    "reservation.success":
+      "Booking yawe kuri {branch} yakiriwe. Turakuvugisha vuba.",
+    "reservation.eyebrow": "Bookinga Ameza Yawe",
+
+    "reservation.info.heading": "Intebe iragutegereje.",
+    "reservation.info.subheading":
+      "Yaba ari ifunguro rya gicece cyangwa ibirori by'ibyishimo, tuzaba twiteguye mbere y'uko uhagera.",
+    "reservation.info.openDailyLabel": "DUKORA BURI MUNSI",
+    "reservation.info.openDailyValue": "10:00 – 23:00",
+    "reservation.info.helpLabel": "UKENEYE UBUFASHA?",
+    "reservation.info.helpValue": "Duhamagare ku matsinda manini (10+)",
+    "reservation.info.confirmationLabel": "KWEMEZA",
+    "reservation.info.confirmationValue": "Urabona igisubizo vuba",
+    "reservation.info.bookingFor": "Booking ya {branch}",
+
+    "reservation.form.heading": "Amakuru yawe",
+    "reservation.form.allRequired": "Ibisabwa byose birakenewe",
+    "reservation.form.depositNote":
+      "Inyongera ya {amount} ishobora gusabwa ku matsinda manini.",
+    "reservation.form.policy":
+      "Mu kubookinga, wemeye amabwiriza yacu ya booking.",
+    "reservation.form.errorFallback": "Kohereza booking ntibyakunze",
+    "reservation.namePlaceholder": "urugero: Sarah Uwimana",
+    "reservation.date": "ITARIKI",
+    "reservation.time": "ISAHA",
+    "reservation.submitting": "Kohereza...",
+
+    /* ════ REVIEWS SECTION ════ */
+    "reviews.eyebrow": "UBURAMBE BW'ABASHYITSI",
+    "reviews.title": "Ibihe kuri {branch}",
+    "reviews.subtitle":
+      "Inkuru z'ukuri z'abashyitsi nyabo — buri gitekerezo kidufasha kugukorera neza.",
+    "reviews.latestFeedback": "IBITEKEREZO BIHERUKA",
+    "reviews.recentReviews": "Ibitekerezo Bya Hafi",
+    "reviews.writeFirst": "Andika Igitekerezo Cya Mbere",
+    "reviews.writeReview": "Andika Igitekerezo",
+    "reviews.empty": "Nta bitekerezo biraboneka",
+
+    /* ════ CONTACT & CHAT ════ */
+    "contact.title": "Uko Watubona & Aho Tubarizwa",
+    "contact.subtitle":
+      "Vugana na {branch} kuri delivery ndetse na booking y'ameza.",
+    "contact.phone": "Telefoni",
+    "contact.email": "Imeri",
+    "contact.address": "Aderesi",
+    "contact.whatsapp": "Ohereza ubutumwa kuri WhatsApp",
+
+    "chat.title": "Ganira n'Uwakira",
+    "chat.subtitle":
+      "Ganira na {branch}. Baza ku biryo cyangwa ameza aboneka.",
+    "chat.input": "Andika ubutumwa bwawe",
+    "chat.send": "Ohereza",
+    "chat.widget": "Ganira {city}",
+    "chat.modal": "Ganira - {city}",
+    "chat.reply":
+      "Urakoze ku butumwa bwawe kuri {branch}. Itsinda ryacu rizagusubiza vuba.",
+
+    "branch.choose": "Hitamo Ishami Ryawe",
+    "branch.sub":
+      "Hitamo ishami kugira ngo urebe menu, uganire, kandi ubookinge ameza.",
+    "branch.label": "Ishami",
+    "branch.continue": "Komeza na {city}",
+    "branch.musanze.subtitle":
+      "Gufata byihuse no kurya ureba imisozi",
+    "branch.huye.subtitle":
+      "Salon y'ijoro na serivisi y'ameza yihuse",
+    "branch.huye": "Ishami rya Huye",
+    "branch.musanze": "Ishami rya Musanze",
+
+    "footer.copy":
+      "© 2026 City Snack Lounge. Yateguwe ku gutumiza ibiryo byoroshye.",
+    "footer.hours": "Dufungura buri munsi: 10:00 - 23:00",
+
+    "food.ready": "Biteguye mu minota 20-25 kuri {branch}.",
+    "food.add": "Ongeraho ku Itumizo",
+
+    /* ════ CART & PAYMENTS ════ */
+    "cart.title": "Itumizo Ryawe",
+    "cart.empty": "Agatebo kawe karimo ubusa",
     "cart.emptyHint": "Shyiramo ibintu bivuye kuri menu utangire.",
     "cart.button": "Agatebo",
     "cart.items": "Ibintu {count}",
@@ -504,20 +953,18 @@ const translations: Record<Language, Dictionary> = {
     "cart.phone": "Nimero ya telefoni",
     "cart.address": "Aderesi yo kubigezwaho",
     "cart.notes": "Ibisobanuro (bidateganyijwe)",
-    "cart.placeOrder": "Ohereza itumizwa",
-    "cart.placing": "Kohereza itumizwa...",
+    "cart.placeOrder": "Ohereza Itumizo",
+    "cart.placing": "Kohereza itumizo...",
     "cart.remove": "Kuraho",
     "cart.close": "Funga",
-    "cart.orderPlaced": "Itumizwa ryoherejwe!",
-    "cart.orderCode": "Kode y'itumizwa ryawe",
+    "cart.orderPlaced": "Itumizo ryoherejwe!",
+    "cart.orderCode": "Kode y'itumizo ryawe",
     "cart.orderSaved":
-      "Reception yamenyeshejwe. Bika kode kugira ngo ukurikirane itumizwa ryawe.",
+      "Reception yamenyeshejwe. Bika kode kugira ngo ukurikirane itumizo ryawe.",
     "cart.validationError":
       "Uzuza neza ibisabwa byose (amazina byibura inyuguti 2, telefoni byibura imibare 7).",
-    "cart.failedOrder": "Itumizwa ntiryagenze neza",
+    "cart.failedOrder": "Itumizo ntiryagenze neza",
 
-    /* 🆕 MoMo payment (RW) — REAL MTN flow
-       Order: Tap to dial → Enter amount → Verify NAME → Enter PIN */
     "cart.placeOrderMomo": "Ohereza & Wishyure",
     "cart.payment.title": "Uburyo bwo kwishyura",
     "cart.payment.cash": "Amafaranga",
@@ -526,8 +973,9 @@ const translations: Record<Language, Dictionary> = {
     "cart.payment.momoHint": "Wishyure ubu ukoresheje MoMo",
     "cart.momo.title": "Ishyura ukoresheje MTN Mobile Money",
     "cart.momo.subtitle": "Kurikiza izi ntambwe 4 kuri telefoni yawe",
-    "cart.momo.yourOrderCode": "Kode y'itumizwa ryawe",
-    "cart.momo.saveThisCode": "Ibike — uzayikenera kugirango ufate itumizwa",
+    "cart.momo.yourOrderCode": "Kode y'Itumizo Ryawe",
+    "cart.momo.saveThisCode":
+      "Ibike — uzayikenera kugirango ufate itumizo",
     "cart.momo.step1": "Kanda uhamagare",
     "cart.momo.step2": "Andika amafaranga",
     "cart.momo.step3": "Reba niba izina ryacu rigaragara",
@@ -535,8 +983,10 @@ const translations: Record<Language, Dictionary> = {
     "cart.momo.shouldShow": "MTN igiye kwerekana:",
     "cart.momo.verifyNameHelp":
       "Niba HARI IRINDI zina rigaragaye, hagarika ako kanya — ntukande PIN yawe.",
-    "cart.momo.amountHint": "Andika {amount} nk'uko yanditse — ntusimbuze.",
-    "cart.momo.enterPin": "Andika PIN yawe y'ibanga ya MoMo kugirango wemeze",
+    "cart.momo.amountHint":
+      "Andika {amount} nk'uko yanditse — ntusimbuze.",
+    "cart.momo.enterPin":
+      "Andika PIN yawe y'ibanga ya MoMo kugirango wemeze",
     "cart.momo.copy": "Kopera",
     "cart.momo.tapToDial": "Kanda uhamagare ubu",
     "cart.momo.waiting":
@@ -545,8 +995,6 @@ const translations: Record<Language, Dictionary> = {
     "cart.momo.receptionWillConfirm":
       "Tuzahuza ubwishyu bwawe na: {name} ({phone}). Kwemezwa mu minota mike.",
 
-    "branch.huye": "Ishami rya Huye",
-    "branch.musanze": "Ishami rya Musanze",
     "greeting.morning": "Mwaramutse",
     "greeting.afternoon": "Mwiriwe",
     "greeting.evening": "Mwiriwe neza",
@@ -563,24 +1011,121 @@ const translations: Record<Language, Dictionary> = {
     "common.at": "saa",
     "common.received": "Byakiriwe",
 
-    "order.status.new": "Gushya",
+    "reception.portal": "Urubuga rwa Reception",
+    "reception.console": "Console ya Serivisi ya Buri Munsi",
+    "reception.receptionist": "Uwakira",
+    "reception.customerView": "Icyerekezo cy'Umukiriya",
+    "reception.branchLocked": "Ifunze ku ishami ryawe",
+    "reception.nav.overview": "Incamake",
+    "reception.nav.chats": "Ubutumwa",
+    "reception.nav.reservations": "Booking",
+    "reception.nav.orders": "Amatumizo",
+    "reception.nav.deliveries": "Ibigezwaho",
+    "reception.section.messages": "Ubutumwa",
+    "reception.section.bookings": "Booking",
+    "reception.section.kitchen": "Igikoni",
+    "reception.section.dispatch": "Kohereza",
+    "reception.overview.subtitle":
+      "Dore incamake y'ibibera ku ishami ryawe ubu.",
+    "reception.overview.openChats": "Fungura Ubutumwa",
+    "reception.overview.viewReservations": "Reba Booking",
+    "reception.overview.viewOrders": "Reba Amatumizo",
+    "reception.overview.liveSnapshot": "Ifoto y'Ako Kanya",
+    "reception.stat.messages": "Ubutumwa",
+    "reception.stat.messagesHint": "Ibiganiro bishya bitarasomwa",
+    "reception.stat.reservations": "Booking",
+    "reception.stat.reservationsHint": "Booking zitegereje kwemezwa",
+    "reception.stat.kitchen": "Igikoni",
+    "reception.stat.kitchenHint": "Amatumizo ari gutegurwa",
+    "reception.stat.dispatch": "Kohereza",
+    "reception.stat.dispatchHint": "Ibigezwaho biri mu nzira",
+
+    "chat.inbox.title": "Ubutumwa Bwinjira",
+    "chat.inbox.subtitle":
+      "Buri kiganiro gitegereje igisubizo cyawe cyiza.",
+    "chat.search.placeholder": "Shakisha ibiganiro...",
+    "chat.purge": "Siba ibyafunzwe kera",
+    "chat.conversations": "Ibiganiro",
+    "chat.noMessages": "Nta butumwa buraboneka",
+    "chat.status.new": "Gishya",
+    "chat.status.active": "Gikora",
+    "chat.status.closed": "Cyafunzwe",
+    "chat.status.newConv": "Ikiganiro gishya",
+    "chat.confirm.deleteTitle": "Siba iki kiganiro?",
+    "chat.confirm.deleteBody": "Ibi ntibishobora gusubirwamo.",
+    "chat.confirm.purge":
+      "Siba ibiganiro byose byafunzwe birenze iminsi 7?",
+    "chat.toast.closed": "Ikiganiro cyafunzwe",
+    "chat.toast.reopened": "Ikiganiro cyafunguwe",
+    "chat.toast.deleted": "Ikiganiro cyasibwe",
+    "chat.toast.purged": "Ibiganiro bya kera byasibwe",
+    "chat.reply.placeholder": "Andika igisubizo cyawe...",
+    "chat.closedNotice":
+      "Iki kiganiro cyafunzwe. Fungura kugira ngo usubize.",
+    "chat.selectPrompt": "Hitamo ikiganiro",
+    "chat.selectHint": "Hitamo chat mu rutonde utangire.",
+    "chat.empty.search": "Nta bisubizo",
+    "chat.empty.none": "Nta biganiro hano",
+    "chat.empty.searchHint": "Gerageza gushakisha ukundi.",
+    "chat.empty.filterHint": "Gerageza akayunguruzo kandi.",
+
+    "res.title": "Booking",
+    "res.subtitle":
+      "Booking z'ameza z'abakiriya zizagaragara hano ako kanya.",
+    "res.search.placeholder": "Shakisha izina, telefoni, cyangwa itariki...",
+    "res.date": "Itariki ya booking",
+    "res.party": "Umubare w'abantu",
+    "res.guest": "umushyitsi",
+    "res.guests": "abashyitsi",
+    "res.status.pending": "Itegereje",
+    "res.status.confirmed": "Yemejwe",
+    "res.status.seated": "Yicaye",
+    "res.status.cancelled": "Yasibwe",
+    "res.action.confirm": "Emeza",
+    "res.action.seat": "Shyira Yicaye",
+    "res.confirm.delete": "Siba iyi booking burundu?",
+    "res.toast.pending": "Booking yashyizwe mu itegerezo",
+    "res.toast.confirmed": "Booking yemejwe",
+    "res.toast.seated": "Umushyitsi yashyizwe yicaye",
+    "res.toast.cancelled": "Booking yasibwe",
+    "res.toast.deleted": "Booking yasibwe",
+    "res.empty.search": "Nta booking ihuye",
+    "res.empty.none": "Nta booking hano",
+    "res.empty.searchHint": "Gerageza gushakisha ukundi.",
+    "res.empty.noneHint":
+      "Booking nshya z'ameza zizagaragara hano ako kanya.",
+
+    "order.title": "Amatumizo",
+    "order.subtitle":
+      "Hindura aho itumizo rigeze ku gikoni no kohereza.",
+    "order.type.delivery": "Kubigezwaho",
+    "order.type.pickup": "Kuza kubifata",
+    "order.status.new": "Gishya",
     "order.status.preparing": "Biri gutegurwa",
     "order.status.ready": "Byamaze gutegurwa",
     "order.status.outForDelivery": "Biri mu nzira",
     "order.status.delivered": "Byagejejwe",
     "order.status.cancelled": "Byasibwe",
     "order.status.awaitingPayment": "Bitegereje kwishyurwa",
+    "order.action.moveTo": "Imurira kuri",
+    "order.action.print": "Capa",
+    "order.action.printDelivery": "Capa amakuru yo kugezwaho",
+    "order.confirm.cancel": "Siba itumizo {code}?",
+    "order.confirm.delete": "Siba itumizo {code}?",
+    "order.toast.cancelled": "Itumizo ryasibwe",
+    "order.toast.deleted": "Itumizo ryasibwe",
+    "order.empty.none": "Nta matumizo hano",
+    "order.empty.hint":
+      "Amatumizo mashya azagaragara hano ako kanya.",
 
-    "reservation.title": "Booking Ameza",
-    "reservation.subtitle":
-      "Booking ameza kuri {branch}. Hitamo itariki, isaha n'umubare w'abashyitsi.",
-    "reservation.name": "Amazina",
-    "reservation.phone": "Nimero ya telefoni",
-    "reservation.guests": "Umubare w'abashyitsi",
-    "reservation.submit": "Ohereza kubika",
-    "reservation.success":
-      "Ku booking ameza byawe kuri {branch} byakiriwe. Turakuvugisha vuba.",
-    "reservation.eyebrow": "Booking Ameza Yawe",
+    "delivery.title": "Ibigezwaho",
+    "delivery.subtitle": "Amatumizo ari mu nzira agana ku bakiriya.",
+    "delivery.onTheWay": "Mu Nzira",
+    "delivery.markDelivered": "Shyira Byagejejwe",
+    "delivery.toast.delivered": "byagejejwe",
+    "delivery.empty.none": "Nta bintu biri kugezwaho",
+    "delivery.empty.hint":
+      "Amatumizo yashyizwe « mu nzira » azagaragara hano.",
   },
 };
 
@@ -602,6 +1147,11 @@ export function LanguageProvider({ children }: PropsWithChildren) {
       ? (cached as Language)
       : "en";
   });
+
+  // Keep <html lang="..."> attribute updated for SEO and browser accessibility
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const value = useMemo<LanguageContextValue>(() => {
     return {

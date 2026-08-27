@@ -13,52 +13,86 @@ type ThemeContextValue = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
+  isSystemTheme: boolean; // Tells you if user is currently relying on OS automatic theme
+  resetToSystem: () => void; // Optional: Reset override back to OS auto
 };
 
 const STORAGE_KEY = "city-snack-theme";
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function ThemeProvider({ children }: PropsWithChildren) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    // 1. Check localStorage
-    const cached = localStorage.getItem(STORAGE_KEY);
-    if (cached === "dark" || cached === "light") return cached;
+function getSystemTheme(): Theme {
+  if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark";
+  }
+  return "light";
+}
 
-    // 2. Fall back to system preference
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
+export function ThemeProvider({ children }: PropsWithChildren) {
+  // Track if user explicitly picked a theme
+  const [hasUserOverride, setHasUserOverride] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    const cached = localStorage.getItem(STORAGE_KEY);
+    return cached === "dark" || cached === "light";
   });
 
-  // Apply theme to <html> element
+  // Active theme state
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
+    const cached = localStorage.getItem(STORAGE_KEY);
+    if (cached === "dark" || cached === "light") {
+      return cached;
+    }
+    return getSystemTheme();
+  });
+
+  // Apply theme class to <html> element
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
-    localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
 
-  // Listen to system theme changes (only if user hasn't chosen explicitly)
+    // ONLY write to localStorage if user explicitly overrides OS preference
+    if (hasUserOverride) {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [theme, hasUserOverride]);
+
+  // Real-time listener for OS system theme changes (macOS / Windows / iOS / Android)
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem(STORAGE_KEY)) {
+    
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      // Only auto-update if the user hasn't manually overridden the theme
+      if (!hasUserOverride) {
         setThemeState(e.matches ? "dark" : "light");
       }
     };
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
+
+    mediaQuery.addEventListener("change", handleSystemChange);
+    return () => mediaQuery.removeEventListener("change", handleSystemChange);
+  }, [hasUserOverride]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
       theme,
-      setTheme: setThemeState,
-      toggleTheme: () =>
-        setThemeState((prev) => (prev === "light" ? "dark" : "light")),
+      isSystemTheme: !hasUserOverride,
+      setTheme: (newTheme: Theme) => {
+        setHasUserOverride(true);
+        setThemeState(newTheme);
+      },
+      toggleTheme: () => {
+        setHasUserOverride(true);
+        setThemeState((prev) => (prev === "light" ? "dark" : "light"));
+      },
+      resetToSystem: () => {
+        localStorage.removeItem(STORAGE_KEY);
+        setHasUserOverride(false);
+        setThemeState(getSystemTheme());
+      },
     }),
-    [theme]
+    [theme, hasUserOverride]
   );
 
   return (

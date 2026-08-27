@@ -105,15 +105,15 @@ export function CartDrawer() {
       setNotes("");
     } catch (err) {
       const raw = err instanceof Error ? err.message : t("cart.failedOrder");
+      console.error("🔴 ORDER FAILED - Full error:", err);
+      console.error("🔴 Raw message:", raw);
       const friendly =
         raw.startsWith("[") || raw.includes('"code"')
           ? t("cart.validationError")
           : raw;
       setError(friendly);
-    } finally {
-      setLoading(false);
     }
-  }
+  } 
 
   // 🆕 Notify reception that customer has paid
   async function notifyPaymentSent() {

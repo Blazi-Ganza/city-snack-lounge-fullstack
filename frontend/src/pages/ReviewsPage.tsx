@@ -4,6 +4,7 @@ import { useBranch } from "../context/BranchContext";
 import { getBranchName } from "../data";
 import { Button } from "../components/ui/Button";
 import { PageHero } from "../components/ui/PageHero";
+import { useLanguage } from "../context/LanguageContext"; // ADDED THIS
 
 type Review = {
   id: string;
@@ -95,6 +96,7 @@ function formatDate(dateStr: string) {
 
 export function ReviewsPage() {
   const { selectedBranch } = useBranch();
+  const { t } = useLanguage(); // ADDED HOOK
   const branchLabel = getBranchName(selectedBranch);
 
   const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
@@ -162,11 +164,11 @@ export function ReviewsPage() {
           HERO — no watermark for clean look
       ═══════════════════════════════════════════════ */}
       <PageHero
-        eyebrow="Guest Experiences"
-        title="Moments at"
+        eyebrow={t("reviews.eyebrow")}
+        title={t("reviews.title", { branch: "" }).trim()} // Dynamic Title based on language
         accentWord={branchLabel}
         accentPosition="after"
-        subtitle="Real stories from real guests — every review helps us serve you better."
+        subtitle={t("reviews.subtitle")}
         showWatermark={false}
       />
 
@@ -228,7 +230,7 @@ export function ReviewsPage() {
                 onClick={() => setShowForm((v) => !v)}
                 className="w-full sm:w-auto"
               >
-                {showForm ? "Cancel" : "Write a Review"}
+                {showForm ? t("common.cancel") : t("reviews.writeReview")}
               </Button>
             </div>
           </motion.div>
@@ -349,7 +351,7 @@ export function ReviewsPage() {
                       onClick={() => setShowForm(false)}
                       className="rounded-xl border border-[var(--line)] px-6 py-3 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--card-hover)]"
                     >
-                      Cancel
+                      {t("common.cancel")}
                     </button>
                   </div>
                 </form>
@@ -368,16 +370,16 @@ export function ReviewsPage() {
           <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--primary)]">
-                Latest feedback
+                {t("reviews.latestFeedback")}
               </p>
               <h2 className="font-display mt-2 text-2xl font-semibold text-[var(--ink)] sm:text-3xl">
-                Recent Reviews
+                {t("reviews.recentReviews")}
               </h2>
             </div>
 
             {branchReviews.length === 0 && !showForm && (
               <Button onClick={() => setShowForm(true)}>
-                Write First Review
+                {t("reviews.writeFirst")}
               </Button>
             )}
           </div>
@@ -386,10 +388,7 @@ export function ReviewsPage() {
             <div className="rounded-3xl border border-dashed border-[var(--line)] bg-[var(--card)] p-12 text-center">
               <div className="text-5xl">💬</div>
               <p className="mt-4 font-semibold text-[var(--ink)]">
-                No reviews yet
-              </p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                Be the first to share your experience at {branchLabel}!
+                {t("reviews.empty")}
               </p>
             </div>
           ) : (
