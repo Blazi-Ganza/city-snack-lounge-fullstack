@@ -10,8 +10,10 @@ import { LogoWatermark } from "../components/ui/LogoWatermark";
 import { getApi } from "../services/api";
 import { cn } from "../utils/cn";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=2000&q=80";
+// Video and Image Assets
+const MUSANZE_HERO_VIDEO = "/videos/citysnackmusanze.mp4";
+const HUYE_HERO_VIDEO = "/videos/citysnackhuye.mp4";
+const HERO_IMAGE = "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=2000&q=80"; 
 
 const GALLERY = [
   { src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80", alt: "Plated dinner" },
@@ -592,27 +594,54 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
   const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // Determine branch & active video
+  const branchLower = `${branchLabel} ${basePath}`.toLowerCase();
+  const isMusanze = branchLower.includes("musanze");
+  const isHuye = branchLower.includes("huye");
+
+  const activeVideo = isMusanze
+    ? MUSANZE_HERO_VIDEO
+    : isHuye
+    ? HUYE_HERO_VIDEO
+    : null;
+
   return (
-    <section ref={ref} className="relative h-[85vh] w-full overflow-hidden">
+    <section ref={ref} className="relative h-[85vh] min-h-[560px] w-full overflow-hidden">
+      {/* Background Video or Fallback Image */}
       <motion.div style={{ y }} className="absolute inset-0">
-        <img
-          src={HERO_IMAGE}
-          alt="City Snack Lounge dining"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+        {activeVideo ? (
+          <video
+            key={activeVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={HERO_IMAGE}
+            className="h-full w-full object-cover"
+          >
+            <source src={activeVideo} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src={HERO_IMAGE}
+            alt="City Snack Lounge dining"
+            className="h-full w-full object-cover"
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/80" />
       </motion.div>
 
+      {/* Hero Content */}
       <motion.div
         style={{ opacity }}
-        className="relative flex h-full items-end px-4 pb-16 sm:px-8 sm:pb-20"
+        className="relative flex h-full flex-col justify-end px-4 pb-16 sm:px-8 sm:pb-20 pt-20 z-10"
       >
         <div className="mx-auto w-full max-w-6xl text-white">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#D4A017]"
+            className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#D4A017]"
           >
             {branchLabel} · City Snack Lounge
           </motion.p>
@@ -621,7 +650,7 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="font-display max-w-3xl text-4xl font-semibold leading-[1.05] sm:text-6xl lg:text-7xl"
+            className="font-display max-w-3xl text-3xl font-semibold leading-[1.1] sm:text-6xl lg:text-7xl"
           >
             {t("home.title", { branch: branchLabel })}
           </motion.h1>
@@ -630,7 +659,7 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="mt-5 max-w-xl text-base text-white/80 sm:text-lg"
+            className="mt-4 max-w-xl text-sm leading-relaxed text-white/80 sm:text-lg"
           >
             {t("home.subtitle")}
           </motion.p>
@@ -639,7 +668,7 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9 }}
-            className="mt-8 flex flex-wrap gap-3"
+            className="mt-6 flex flex-wrap gap-3"
           >
             <Link to={`${basePath}/menu`}>
               <Button>{t("home.browseMenu")}</Button>
@@ -653,17 +682,16 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
         </div>
       </motion.div>
 
+      {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60"
-        animate={{ y: [0, 8, 0] }}
+        className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/70 pointer-events-none z-20 flex flex-col items-center gap-1"
+        animate={{ y: [0, 6, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-[10px] uppercase tracking-[0.3em]">
-            {t("home.hero.scroll")}
-          </span>
-          <div className="h-8 w-px bg-white/40" />
-        </div>
+        <span className="text-[10px] font-medium uppercase tracking-[0.25em]">
+          {t("home.hero.scroll")}
+        </span>
+        <div className="h-5 w-px bg-white/50" />
       </motion.div>
     </section>
   );

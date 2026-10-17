@@ -869,7 +869,7 @@ const translations: Record<Language, Dictionary> = {
 
     "reservation.info.heading": "Intebe iragutegereje.",
     "reservation.info.subheading":
-      "Yaba ari ifunguro rya gicece cyangwa ibirori by'ibyishimo, tuzaba twiteguye mbere y'uko uhagera.",
+      "Yaba ari ifunguro rya bucece cyangwa ibirori, tuzaba twiteguye mbere y'uko uhagera.",
     "reservation.info.openDailyLabel": "DUKORA BURI MUNSI",
     "reservation.info.openDailyValue": "10:00 – 23:00",
     "reservation.info.helpLabel": "UKENEYE UBUFASHA?",
