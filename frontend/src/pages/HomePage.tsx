@@ -608,7 +608,7 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
   return (
     <section ref={ref} className="relative h-[85vh] min-h-[560px] w-full overflow-hidden">
       {/* Background Video or Fallback Image */}
-      <motion.div style={{ y }} className="absolute inset-0">
+      <motion.div style={{ y }} className="absolute inset-0 bg-neutral-950">
         {activeVideo ? (
           <video
             key={activeVideo}
@@ -616,7 +616,7 @@ function HeroSection({ branchLabel, basePath, t }: HeroSectionProps) {
             loop
             muted
             playsInline
-            poster={HERO_IMAGE}
+            preload="auto"
             className="h-full w-full object-cover"
           >
             <source src={activeVideo} type="video/mp4" />
