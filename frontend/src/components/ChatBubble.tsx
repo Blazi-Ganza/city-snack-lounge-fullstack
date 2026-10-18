@@ -6,21 +6,22 @@ type ChatBubbleProps = {
   time: string;
 };
 
-export function ChatBubble({ from, text, time }: ChatBubbleProps) {
+export function ChatBubble({ from, text, time }: { from: "customer" | "staff"; text: string; time: string }) {
   const isCustomer = from === "customer";
 
   return (
-    <div className={cn("flex", isCustomer ? "justify-end" : "justify-start")}>
+    <div className={`flex ${isCustomer ? "justify-end" : "justify-start"}`}>
       <div
-        className={cn(
-          "max-w-[82%] rounded-2xl px-3 py-2.5 text-sm shadow-sm",
+        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
           isCustomer
-            ? "rounded-br-sm bg-[var(--brand-1)] text-white shadow-orange-200"
-            : "rounded-bl-sm border border-[var(--line)] bg-white text-[var(--ink)] shadow-slate-200"
-        )}
+            ? "rounded-br-md bg-[var(--brand-1)] text-white"
+            : "rounded-bl-md border border-[var(--line)] bg-[var(--card)] text-[var(--ink)]"
+        }`}
       >
-        <p>{text}</p>
-        <p className={cn("mt-1 text-[11px]", isCustomer ? "text-orange-100" : "text-[var(--muted)]")}>{time}</p>
+        <p className="whitespace-pre-wrap break-words">{text}</p>
+        <p className={`mt-1 text-[10px] ${isCustomer ? "text-white/70" : "text-[var(--muted)]"}`}>
+          {time}
+        </p>
       </div>
     </div>
   );

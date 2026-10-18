@@ -156,7 +156,7 @@ export function ChatWidget() {
     <>
       <motion.button
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-40 h-12 rounded-xl bg-[var(--brand-1)] px-4 text-sm font-medium text-white shadow-lg shadow-orange-200"
+        className="fixed bottom-4 right-4 z-40 h-12 rounded-xl bg-[var(--brand-1)] px-4 text-sm font-medium text-white shadow-lg shadow-orange-500/20"
         animate={{ y: [0, -4, 0] }}
         transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
       >
@@ -168,15 +168,15 @@ export function ChatWidget() {
         onClose={() => setOpen(false)}
         title={t("chat.modal", { city: branch.city })}
       >
-        <div className="space-y-3 p-4">
+        <div className="space-y-3 p-4 bg-[var(--card)] text-[var(--ink)]">
           {/* Connection status */}
           {nameEntered && (
             <div className="flex justify-end">
               <span
-                className={`text-xs px-2 py-1 rounded-full ${
+                className={`text-xs px-2 py-1 rounded-full font-medium ${
                   connected
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-500"
+                    ? "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400"
+                    : "bg-[var(--bg-soft)] text-[var(--muted)] border border-[var(--line)]"
                 }`}
               >
                 {connected ? "● Live" : "○ Connecting..."}
@@ -187,13 +187,13 @@ export function ChatWidget() {
           {/* Name prompt */}
           {!nameEntered ? (
             <div className="space-y-3 py-4">
-              <p className="text-sm text-gray-600 text-center">{namePromptText}</p>
+              <p className="text-sm text-[var(--muted)] text-center">{namePromptText}</p>
               <input
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && saveName()}
                 placeholder={language === "fr" ? "Votre nom" : language === "rw" ? "Izina ryawe" : "Your name"}
-                className="h-11 w-full rounded-xl border border-[var(--line)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--brand-1)]"
+                className="h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--input-bg,var(--card))] text-[var(--ink)] placeholder:text-[var(--muted)] px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--brand-1)]"
                 autoFocus
               />
               <button
@@ -206,11 +206,11 @@ export function ChatWidget() {
           ) : (
             <>
               {/* Messages area */}
-              <div className="h-72 space-y-3 overflow-y-auto rounded-xl bg-[var(--bg-soft)] p-3">
+              <div className="h-72 space-y-3 overflow-y-auto rounded-xl border border-[var(--line)] bg-[var(--bg-soft)] p-3">
                 {messages.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
                     <div className="text-5xl">💬</div>
-                    <p className="text-sm text-gray-600">{emptyStateText}</p>
+                    <p className="text-sm text-[var(--muted)]">{emptyStateText}</p>
                     <button
                       onClick={handleSayHi}
                       className="rounded-xl bg-[var(--brand-1)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--brand-2)] transition"
@@ -242,7 +242,7 @@ export function ChatWidget() {
                     if (event.key === "Enter") sendMessage();
                   }}
                   placeholder={t("chat.input")}
-                  className="h-11 flex-1 rounded-xl border border-[var(--line)] bg-white px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--brand-1)]"
+                  className="h-11 flex-1 rounded-xl border border-[var(--line)] bg-[var(--input-bg,var(--card))] text-[var(--ink)] placeholder:text-[var(--muted)] px-4 text-sm outline-none focus:ring-2 focus:ring-[var(--brand-1)]"
                 />
                 <button
                   onClick={() => sendMessage()}
